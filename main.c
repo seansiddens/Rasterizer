@@ -22,9 +22,9 @@ int main(int argc, char *argv[]) {
     color c = {255, 0, 0};
     vec2 p0 = {10, 128};
     vec2 p1 = {240, 115};
-    vec2 p2 = {249, 15};
+    vec2 p2 = {10, 15};
 
-    draw_wireframe_triangle(img, &p0, &p1, &p2, &c);
+    draw_filled_triangle(img, &p0, &p1, &p2, &c);
 
     c.b = 255;
     put_pixel(img, p0.x, p0.y, &c);

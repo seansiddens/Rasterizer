@@ -94,6 +94,10 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
     printf("p1: (%f, %f)\n", p1->x, p1->y);
     printf("p2: (%f, %f)\n", p2->x, p2->y);
 
+    // draw_line(img, p0, p1, col);
+    // draw_line(img, p1, p2, col);
+    // draw_line(img, p2, p0, col);
+
     // Get struct members
     int x0 = p0->x;
     int y0 = p0->y;
@@ -102,50 +106,40 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
     int x2 = p2->x;
     int y2 = p2->y;
 
-    // Compute the x coordinates of the triangle edges
-    float* x01 = interpolate(y0, x0, y1, x1);
-    float* x12 = interpolate(y1, x1, y2, x2);
-    float* x02 = interpolate(y0, x0, y2, x2);
+    // Check which is left or right side
+    int h = (int)((y1 - y0) / 2);
+    float x02 = lerp(y0, x0, y2, x2, h);
+    float x01 = lerp(y0, x0, y1, x1, h);
 
-    // Concantenate the short sides
-    // Allocate memory for storing interpolated values
-    // float* x012 = (float*)malloc((y2-y0+1) * sizeof(float)); 
-    // for (int y = 0; y <= y2; y++) {
-    //     if (y < y1) {
-    //         *(x012 + y-y0) = *(x01 + y-y0);
-    //     }
-    //     else {
-    //         *(x012 + y-y0) = *(x12 + y-y0);
-    //     }
-    // }
-
-    // Determine which is left and which is right
-    // float* x_left;
-    // float* x_right;
-    // int m = (int)((y2 - y0) / 2);
-    // if ((x02+m) < (x01+m)) {
-    //     x_left = x02;
-    //     x_right = x012;
-    // }
-    // else {
-    //     x_left = x012;
-    //     x_right = x02;
-    // }
-
-    // // Draw the horizontal segments
-    // for (int y = y0; y <= y2; y++) {
-    //     for (int x = (int)*(x_left + y-y0); x <= (int)*(x_right + y-y0); x++) {
-    //         put_pixel(img, x, y, col);
-    //     }
-    // }
-
-
-
-
-    // free(x_left);
-    // free(x_right);
-    free(x01);
-    free(x12);
+    // Long edge to the left of shorter edges
+    if(x02 < x01) {
+        // Draw scanlines from y0 to y1
+        for (int y = y0; y <= y1; y++) {
+            for (int x = lerp(y0, x0, y2, x2, y); x <= lerp(y0, x0, y1, x1, y); x++) {
+                put_pixel(img, x, y, col);
+            }
+        }
+        // Draw scanlines from y1 to y2
+        for (int y = y1+1; y <= y2; y++) {
+            for (int x = lerp(y0, x0, y2, x2, y); x <= lerp(y1, x1, y2, x2, y); x++) {
+                put_pixel(img, x, y, col);
+            }
+        }
+    }
+    else {
+        // Draw scanlines from y0 to y1
+        for (int y = y0; y <= y1; y++) {
+            for (int x = lerp(y0, x0, y1, x1, y); x <= lerp(y0, x0, y2, x2, y); x++) {
+                put_pixel(img, x, y, col);
+            }
+        }
+        // Draw scanlines from y1 to y2
+        for (int y = y1+1; y <= y2; y++) {
+            for (int x = lerp(y1, x1, y2, x2, y); x <= lerp(y0, x0, y2, x2, y); x++) {
+                put_pixel(img, x, y, col);
+            }
+        }
+    }
 }
 
 // Linear interpolation from d0 = f(i0) to d1 = f(i1)
