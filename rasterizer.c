@@ -21,7 +21,6 @@ void draw_line(char img[], vec2* p0, vec2* p1, color* col) {
     float x0, y0, x1, y1;
 
     if (abs(p1->x - p0->x) > abs(p1->y - p0->y)){
-        // printf("Line is horizontal-ish!\n");
         // Line is horizontal-ish
         // Make sure x0 < x1
         if (p0->x > p1->x) {
@@ -42,7 +41,6 @@ void draw_line(char img[], vec2* p0, vec2* p1, color* col) {
         }
     }
     else {
-        // printf("Line is vertical-ish!\n");
         // Line is vertical-ish
         // Make sure y0 > y1
         if (p0->y > p1->y) {
