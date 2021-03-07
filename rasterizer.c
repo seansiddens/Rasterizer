@@ -56,17 +56,12 @@ void draw_line(char img[], vec2* p0, vec2* p1, color* col) {
         y0 = p0->y;
         x1 = p1->x;
         y1 = p1->y;
-        int y;
-        for (int x = (int)x0; x <= (int)x1; x++) {
-            y = (int)lerp((int)x0, y0, (int)x1, y1, x);
+
+        int x;
+        for (int y = (int)y0; y <= (int)y1; y++) {
+            x = (int)lerp((int)y0, x0, (int)y1, x1, y);
             put_pixel(img, x, y, col);
         }
-
-        // float *x_values = interpolate((int)y0, x0, (int)y1, x1); // Buffer of interpolated values
-        // for (int y = (int)y0; y <= (int)y1; y++) {
-        //     put_pixel(img, (int)*(x_values + (y - (int)y0)), y, col);
-        // }
-        // free(x_values);
     }
 }
 
