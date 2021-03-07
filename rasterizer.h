@@ -6,11 +6,11 @@ typedef struct {
 } vec3;
 
 typedef struct {
-    float x, y;
+    float x, y, h;
 } vec2;
 
 typedef struct {
-    char r, g, b;
+    float r, g, b;
 } color;
 
 void put_pixel(char img[], int x, int y, color* col);

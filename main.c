@@ -19,20 +19,12 @@ int main(int argc, char *argv[]) {
     // Initialize image buffer to 0 values
     memset(img, 0, sizeof(img));
 
-    color c = {255, 0, 0};
-    vec2 p0 = {10, 128};
-    vec2 p1 = {240, 115};
-    vec2 p2 = {10, 15};
+    color c = {1.0, 0, 0};
+    vec2 p0 = {128, 10, 1.0};
+    vec2 p1 = {10, 230, 0.2};
+    vec2 p2 = {240, 145, 0.0};
 
     draw_filled_triangle(img, &p0, &p1, &p2, &c);
-
-    c.b = 255;
-    put_pixel(img, p0.x, p0.y, &c);
-    put_pixel(img, p1.x, p1.y, &c);
-    put_pixel(img, p2.x, p2.y, &c);
-
-
-
 
     // Write out image data to file
     if (stbi_write_bmp("out.bmp", image_width, image_height, 3, img) == 0) {

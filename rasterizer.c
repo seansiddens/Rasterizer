@@ -11,9 +11,13 @@ void put_pixel(char img[], int x, int y, color* col) {
 
     int offset = 3 * (y * image_width + x); // Offset into image buffer
 
-    img[offset] = col->r;
-    img[offset+1] = col->g;
-    img[offset+2] = col->b;
+    char r = (char)(255 * col->r);
+    char g = (char)(255 * col->g);
+    char b = (char)(255 * col->b);
+
+    img[offset] = r;
+    img[offset+1] = g;
+    img[offset+2] = b;
 }
 
 
@@ -106,37 +110,77 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
     int x2 = p2->x;
     int y2 = p2->y;
 
+    float h0 = p0->h;
+    float h1 = p1->h;
+    float h2 = p2->h;
+
     // Check which is left or right side
     int h = (int)((y1 - y0) / 2);
     float x02 = lerp(y0, x0, y2, x2, h);
     float x01 = lerp(y0, x0, y1, x1, h);
 
+    // Shade triangle with scanlines
     // Long edge to the left of shorter edges
+    color shaded_color;
+    float h_left, h_right, h_seg;
+    int x_left, x_right;
     if(x02 < x01) {
         // Draw scanlines from y0 to y1
         for (int y = y0; y <= y1; y++) {
-            for (int x = lerp(y0, x0, y2, x2, y); x <= lerp(y0, x0, y1, x1, y); x++) {
-                put_pixel(img, x, y, col);
+            h_left = lerp(y0, h0, y2, h2, y);
+            h_right = lerp(y0, h0, y1, h1, y);
+            x_left = lerp(y0, x0, y2, x2, y);
+            x_right = lerp(y0, x0, y1, x1, y);
+            for (int x = x_left; x <= x_right; x++) {
+                h_seg = lerp(x_left, h_left, x_right, h_right, x);
+                shaded_color.r = col->r * h_seg;
+                shaded_color.g = col->g * h_seg;
+                shaded_color.b = col->b * h_seg;
+                put_pixel(img, x, y, &shaded_color);
             }
         }
         // Draw scanlines from y1 to y2
         for (int y = y1+1; y <= y2; y++) {
-            for (int x = lerp(y0, x0, y2, x2, y); x <= lerp(y1, x1, y2, x2, y); x++) {
-                put_pixel(img, x, y, col);
+            h_left = lerp(y0, h0, y2, h2, y);
+            h_right = lerp(y1, h1, y2, h2, y);
+            x_left = lerp(y0, x0, y2, x2, y);
+            x_right = lerp(y1, x1, y2, x2, y);
+            for (int x = x_left; x <= x_right; x++) {
+                h_seg = lerp(x_left, h_left, x_right, h_right, x);
+                shaded_color.r = col->r * h_seg;
+                shaded_color.g = col->g * h_seg;
+                shaded_color.b = col->b * h_seg;
+                put_pixel(img, x, y, &shaded_color);
             }
         }
     }
     else {
         // Draw scanlines from y0 to y1
         for (int y = y0; y <= y1; y++) {
-            for (int x = lerp(y0, x0, y1, x1, y); x <= lerp(y0, x0, y2, x2, y); x++) {
-                put_pixel(img, x, y, col);
+            h_left = lerp(y0, h0, y1, h1, h);
+            h_right = lerp(y0, h0, y2, h2, h);
+            x_left = lerp(y0, x0, y1, x1, y);
+            x_right = lerp(y0, x0, y2, x2, y);
+            for (int x = x_left; x <= x_right; x++) {
+                h_seg = lerp(x_left, h_left, x_right, h_right, x);
+                shaded_color.r = col->r;
+                shaded_color.g = col->g * h_seg;
+                shaded_color.b = col->b * h_seg;
+                put_pixel(img, x, y, &shaded_color);
             }
         }
         // Draw scanlines from y1 to y2
         for (int y = y1+1; y <= y2; y++) {
-            for (int x = lerp(y1, x1, y2, x2, y); x <= lerp(y0, x0, y2, x2, y); x++) {
-                put_pixel(img, x, y, col);
+            h_left = lerp(y1, h1, y2, h2, h);
+            h_right = lerp(y0, h0, y2, h2, h);
+            x_left = lerp(y1, x1, y2, x2, y);
+            x_right = lerp(y0, x0, y2, x2, y);
+            for (int x = x_left; x <= x_right; x++) {
+                h_seg = lerp(x_left, h_left, x_right, h_right, x);
+                shaded_color.r = col->r * h_seg;
+                shaded_color.g = col->g * h_seg;
+                shaded_color.b = col->b * h_seg;
+                put_pixel(img, x, y, &shaded_color);
             }
         }
     }
