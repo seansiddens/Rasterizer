@@ -1,17 +1,16 @@
-#include <stdio.h>
 #include <stdlib.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image/stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image/stb_image_write.h"
+#include <stdio.h>
+#include <string.h>
 
 #include "main.h"
 #include "rasterizer.h"
 #include "util.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image/stb_image.h"
 
-
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image/stb_image_write.h"
 
 int main(int argc, char *argv[]) {
 
@@ -21,12 +20,10 @@ int main(int argc, char *argv[]) {
     memset(img, 0, sizeof(img));
 
     color c = {255, 0, 0};
-    vec2 p0 = {0, 0};
-    vec2 p1 = {10, 100};
-    vec2 p2 = {240, 20};
+    vec2 p0 = {0, 128};
+    vec2 p1 = {255, 130};
 
-    float n = lerp(p0.x, p0.y, p1.x, p1.y, 10);
-    printf("%f\n", n);
+    draw_line(img, &p0, &p1, &c);
 
     // draw_filled_triangle(img, &p0, &p1, &p2, &c);
     // c.b = 255;

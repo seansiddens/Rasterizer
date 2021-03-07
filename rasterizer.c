@@ -1,6 +1,11 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "rasterizer.h"
 #include "main.h"
 #include "util.h"
+
 
 void put_pixel(char img[], int x, int y, color* col) {
 
@@ -11,32 +16,6 @@ void put_pixel(char img[], int x, int y, color* col) {
     img[offset+2] = col->b;
 }
 
-// Linear interpolation from d0 = f(i0) to d1 = f(i1)
-// Independent variables are always integers, 
-// while dependent variables are always floats.
-// Returns pointer to beginning of array of interpolated vals. 
-float *interpolate(int i0, float d0, int i1, float d1) {
-    float *values;
-    if (i0 == i1) {
-        *values = d0;
-        return values;
-    }
-
-    // Allocate memory for storing interpolated values
-    // First index has d0, last has d1
-    values = (float*)malloc((abs(i1-i0) + 1) * sizeof(float)); 
-
-    float a = (d1 - d0) / (i1 - i0); // Slope of linear function
-    float d = d0;
-    float *ptr = values;
-    for (int i = i0; i <= i1; i++) {
-        *ptr = d;
-        ptr++;
-        d = d + a;
-    }
-
-    return values;
-}
 
 void draw_line(char img[], vec2* p0, vec2* p1, color* col) {
     float x0, y0, x1, y1;
@@ -176,4 +155,31 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
     // free(x_right);
     free(x01);
     free(x12);
+}
+
+// Linear interpolation from d0 = f(i0) to d1 = f(i1)
+// Independent variables are always integers, 
+// while dependent variables are always floats.
+// Returns pointer to beginning of array of interpolated vals. 
+float *interpolate(int i0, float d0, int i1, float d1) {
+    float *values;
+    if (i0 == i1) {
+        *values = d0;
+        return values;
+    }
+
+    // Allocate memory for storing interpolated values
+    // First index has d0, last has d1
+    values = (float*)malloc((abs(i1-i0) + 1) * sizeof(float)); 
+
+    float a = (d1 - d0) / (i1 - i0); // Slope of linear function
+    float d = d0;
+    float *ptr = values;
+    for (int i = i0; i <= i1; i++) {
+        *ptr = d;
+        ptr++;
+        d = d + a;
+    }
+
+    return values;
 }

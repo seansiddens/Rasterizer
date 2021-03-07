@@ -1,3 +1,5 @@
+#include "util.h"
+
 // Returns sample of lerp between a two points defining a linear function d = f(i)
 // where d is a float and i is an integer
 // [f(i0), f(i1)]
