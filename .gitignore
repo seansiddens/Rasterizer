@@ -1,3 +1,5 @@
 *.bmp
 bin/
 .idea/
+*.o
+rasterizer
