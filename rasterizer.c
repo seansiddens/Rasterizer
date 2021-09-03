@@ -1,13 +1,12 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "rasterizer.h"
 #include "main.h"
+#include "rasterizer.h"
 #include "util.h"
 
-
-void put_pixel(char img[], int x, int y, color* col) {
+void put_pixel(char img[], int x, int y, color *col) {
 
     int offset = 3 * (y * image_width + x); // Offset into image buffer
 
@@ -16,19 +15,18 @@ void put_pixel(char img[], int x, int y, color* col) {
     char b = (char)(255 * col->b);
 
     img[offset] = r;
-    img[offset+1] = g;
-    img[offset+2] = b;
+    img[offset + 1] = g;
+    img[offset + 2] = b;
 }
 
-
-void draw_line(char img[], vec2* p0, vec2* p1, color* col) {
+void draw_line(char img[], vec2 *p0, vec2 *p1, color *col) {
     float x0, y0, x1, y1;
 
-    if (abs(p1->x - p0->x) > abs(p1->y - p0->y)){
+    if (fabsf(p1->x - p0->x) > fabsf(p1->y - p0->y)) {
         // Line is horizontal-ish
         // Make sure x0 < x1
         if (p0->x > p1->x) {
-            vec2* temp = p0;
+            vec2 *temp = p0;
             p0 = p1;
             p1 = temp;
         }
@@ -43,12 +41,11 @@ void draw_line(char img[], vec2* p0, vec2* p1, color* col) {
             y = (int)lerp((int)x0, y0, (int)x1, y1, x);
             put_pixel(img, x, y, col);
         }
-    }
-    else {
+    } else {
         // Line is vertical-ish
         // Make sure y0 > y1
         if (p0->y > p1->y) {
-            vec2* temp = p0;
+            vec2 *temp = p0;
             p0 = p1;
             p1 = temp;
         }
@@ -67,29 +64,29 @@ void draw_line(char img[], vec2* p0, vec2* p1, color* col) {
     }
 }
 
-void draw_wireframe_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) {
+void draw_wireframe_triangle(char img[], vec2 *p0, vec2 *p1, vec2 *p2, color *col) {
     draw_line(img, p0, p1, col);
     draw_line(img, p1, p2, col);
     draw_line(img, p2, p0, col);
 }
 
-void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) {
+void draw_filled_triangle(char img[], vec2 *p0, vec2 *p1, vec2 *p2, color *col) {
     // Sort the points so that y0 <= y1 <= y2
     // if y1 < y0: swap(p1, p0)
     if (p1->y < p0->y) {
-        vec2* temp = p1;
+        vec2 *temp = p1;
         p1 = p0;
         p0 = temp;
     }
     // if y2 < y0: swap(p2, p0)
     if (p2->y < p0->y) {
-        vec2* temp = p2;
+        vec2 *temp = p2;
         p2 = p0;
         p0 = temp;
     }
-    // if y2 < y1: swap(p2, p1) 
+    // if y2 < y1: swap(p2, p1)
     if (p2->y < p1->y) {
-        vec2* temp = p2;
+        vec2 *temp = p2;
         p2 = p1;
         p1 = temp;
     }
@@ -124,7 +121,7 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
     color shaded_color;
     float h_left, h_right, h_seg;
     int x_left, x_right;
-    if(x02 < x01) {
+    if (x02 < x01) {
         // Draw scanlines from y0 to y1
         for (int y = y0; y <= y1; y++) {
             h_left = lerp(y0, h0, y2, h2, y);
@@ -140,7 +137,7 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
             }
         }
         // Draw scanlines from y1 to y2
-        for (int y = y1+1; y <= y2; y++) {
+        for (int y = y1 + 1; y <= y2; y++) {
             h_left = lerp(y0, h0, y2, h2, y);
             h_right = lerp(y1, h1, y2, h2, y);
             x_left = lerp(y0, x0, y2, x2, y);
@@ -153,8 +150,7 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
                 put_pixel(img, x, y, &shaded_color);
             }
         }
-    }
-    else {
+    } else {
         // Draw scanlines from y0 to y1
         for (int y = y0; y <= y1; y++) {
             h_left = lerp(y0, h0, y1, h1, h);
@@ -170,7 +166,7 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
             }
         }
         // Draw scanlines from y1 to y2
-        for (int y = y1+1; y <= y2; y++) {
+        for (int y = y1 + 1; y <= y2; y++) {
             h_left = lerp(y1, h1, y2, h2, h);
             h_right = lerp(y0, h0, y2, h2, h);
             x_left = lerp(y1, x1, y2, x2, y);
@@ -187,11 +183,11 @@ void draw_filled_triangle(char img[], vec2* p0, vec2* p1, vec2* p2, color* col) 
 }
 
 // Linear interpolation from d0 = f(i0) to d1 = f(i1)
-// Independent variables are always integers, 
+// Independent variables are always integers,
 // while dependent variables are always floats.
-// Returns pointer to beginning of array of interpolated vals. 
+// Returns pointer to beginning of array of interpolated vals.
 float *interpolate(int i0, float d0, int i1, float d1) {
-    float *values;
+    float *values = NULL;
     if (i0 == i1) {
         *values = d0;
         return values;
@@ -199,7 +195,7 @@ float *interpolate(int i0, float d0, int i1, float d1) {
 
     // Allocate memory for storing interpolated values
     // First index has d0, last has d1
-    values = (float*)malloc((abs(i1-i0) + 1) * sizeof(float)); 
+    values = (float *)malloc((abs(i1 - i0) + 1) * sizeof(float));
 
     float a = (d1 - d0) / (i1 - i0); // Slope of linear function
     float d = d0;
