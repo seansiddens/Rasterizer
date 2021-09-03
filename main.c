@@ -21,8 +21,8 @@ int main(void) {
 
     color c = {1.0, 0, 0};
     vec2 p0 = {128, 10, 1.0};
-    vec2 p1 = {10, 230, 0.2};
-    vec2 p2 = {240, 145, 0.0};
+    vec2 p1 = {10, 230, 1.0};
+    vec2 p2 = {240, 145, 1.0};
 
     draw_filled_triangle(img, &p0, &p1, &p2, &c);
 
